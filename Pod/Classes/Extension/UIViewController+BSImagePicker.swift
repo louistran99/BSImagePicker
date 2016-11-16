@@ -41,16 +41,36 @@ public extension UIViewController {
     func bs_presentImagePickerController(imagePicker: BSImagePickerViewController, animated: Bool, select: ((asset: PHAsset) -> Void)?, deselect: ((asset: PHAsset) -> Void)?, cancel: (([PHAsset]) -> Void)?, finish: (([PHAsset]) -> Void)?, completion: (() -> Void)?) {
         BSImagePickerViewController.authorize(fromViewController: self) { (authorized) -> Void in
             // Make sure we are authorized before proceding
-            guard authorized == true else { return }
             
-            // Set blocks
-            imagePicker.photosViewController.selectionClosure = select
-            imagePicker.photosViewController.deselectionClosure = deselect
-            imagePicker.photosViewController.cancelClosure = cancel
-            imagePicker.photosViewController.finishClosure = finish
+            if authorized == false {
+                let alertVC = UIAlertController(title: nil, message: "We're sorry, you haven't granted us access to your album.  You can update this permission in the Zillow settings area of your device", preferredStyle: .Alert)
+                let alertAction = UIAlertAction(title: "OK", style: .Default, handler: { (action) in
+                    self.dismissViewControllerAnimated(true, completion: nil)
+                })
+                
+                let alertGotoSettings = UIAlertAction(title: "Settings", style: .Default, handler: { (action) in
+                    let settingsURL = NSURL(string: UIApplicationOpenSettingsURLString)
+                    if let url = settingsURL {
+                        UIApplication.sharedApplication().openURL(url)
+                    }
+                })
+                alertVC.addAction(alertGotoSettings)
+                alertVC.addAction(alertAction)
+                self.presentViewController(alertVC, animated: true, completion: nil)
+                
+                
+            } else {
+                // Set blocks
+                imagePicker.photosViewController.selectionClosure = select
+                imagePicker.photosViewController.deselectionClosure = deselect
+                imagePicker.photosViewController.cancelClosure = cancel
+                imagePicker.photosViewController.finishClosure = finish
+                
+                // Present
+                self.presentViewController(imagePicker, animated: animated, completion: completion)
+                
+            }
             
-            // Present
-            self.presentViewController(imagePicker, animated: animated, completion: completion)
         }
     }
 }

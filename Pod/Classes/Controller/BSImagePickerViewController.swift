@@ -88,14 +88,14 @@ public class BSImagePickerViewController : UINavigationController {
         case .NotDetermined:
             // Ask user for permission
             PHPhotoLibrary.requestAuthorization({ (status) -> Void in
-                dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                    self.authorize(status, fromViewController: fromViewController, completion: completion)
-                })
+                //    dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                //        self.authorize(status, fromViewController: fromViewController, completion: completion)
+                //    })
             })
         default: ()
-            dispatch_async(dispatch_get_main_queue(), { () -> Void in
-                completion(authorized: false)
-            })
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            completion(authorized: false)
+        })
         }
     }
     
