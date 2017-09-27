@@ -492,13 +492,16 @@ extension PhotosViewController: UIImagePickerControllerDelegate {
                     self.updateDoneButton()
                     
                     // Call selection closure
-                    if let closure = self.selectionClosure {
+                    if let closure = self.finishClosure {
                         DispatchQueue.global().async {
-                            closure(asset)
+                            closure([asset])
                         }
                     }
-                    
-                    picker.dismiss(animated: true, completion: nil)
+                    var parentVC = picker.presentingViewController
+                    while (parentVC?.presentingViewController != nil) {
+                        parentVC = parentVC?.presentingViewController;
+                    }
+                    parentVC?.dismiss(animated: true, completion: nil)
                 }
         })
     }
